@@ -1,28 +1,23 @@
 require 'spec_helper'
 
-describe package('httpd'), :if => os[:family] == 'redhat' do
-  it { should be_installed }
+#=====================================================================
+# infraグループ存在確認
+# GIDの確認
+#=====================================================================
+describe group('infra') do
+  it { should exist }
+  it { should have_gid 1400 }
 end
 
-describe package('apache2'), :if => os[:family] == 'ubuntu' do
-  it { should be_installed }
+#=====================================================================
+# インフラユーザー存在確認
+# プライマリグループ存在確認
+# rootユーザーに属する
+#=====================================================================
+describe user('infra') do
+  it { should exist }
+  it { should belong_to_primary_group 'infra' }
+  it { should have_uid 1400 }
 end
 
-describe service('httpd'), :if => os[:family] == 'redhat' do
-  it { should be_enabled }
-  it { should be_running }
-end
 
-describe service('apache2'), :if => os[:family] == 'ubuntu' do
-  it { should be_enabled }
-  it { should be_running }
-end
-
-describe service('org.apache.httpd'), :if => os[:family] == 'darwin' do
-  it { should be_enabled }
-  it { should be_running }
-end
-
-describe port(80) do
-  it { should be_listening }
-end
