@@ -68,5 +68,8 @@ describe ('================ YUM インストール確認 ================') do
   describe package('libselinux-python') do
     it { should be_installed }
   end
+  describe package('isof') do
+    it { should be_installed }
+  end
 
 end
