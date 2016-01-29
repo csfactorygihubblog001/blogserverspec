@@ -21,7 +21,7 @@ namespace :spec do
     desc "Run serverspec tests to #{original_target}"
     RSpec::Core::RakeTask.new(target.to_sym) do |t|
       ENV['TARGET_HOST'] = original_target
-      t.pattern = "spec/#{original_target}/*_1041*_spec.rb"
+      t.pattern = "spec/#{original_target}/*_1061*_spec.rb"
     end
   end
 end
