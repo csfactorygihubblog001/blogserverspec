@@ -1,57 +1,41 @@
 require 'spec_helper'
+require 'lib/firewall'
 
 
 describe 'firewalldの設定' do
+  describe package('firewalld') do
+    it {should be_installed}
+  end
+
+
   describe service('firewalld') do
     it {should be_enabled}
     it {should be_running}
   end
 
-  describe package('firewalld') do
-    it {should be_installed}
-  end
+  describe firewall ('trusted') do
+    it {should  be_interface_both 'tun0'}
+    it {should  be_interface_both 'lo'}
+    it {should  be_masquerade_both}
 
-  describe port(80) do
-    it {should be_listening}
   end
-
-  describe command('firewall-cmd --list-interface --zone=trusted --permanent') do
-    its(:stdout){should match /tun0/}
-    its(:stdout){should match /lo/}
+  describe firewall ('dmz') do
+    it {should  be_interface_both 'enp0s9'}
+    it {should_not  be_service_both 'ssh'}
   end
-  describe command('firewall-cmd --list-interface --zone=trusted') do
-    its(:stdout){should match /tun0/}
-    its(:stdout){should match /lo/}
+  describe firewall ('internal') do
+    it {should  be_interface_both 'enp0s8'}
+    it {should_not  be_service_both 'dhcpv6-client'}
+    it {should_not  be_service_both 'ipp-client'}
+    it {should_not  be_service_both 'mdns'}
+    it {should_not  be_service_both 'samba-client'}
+    it {should  be_service_both 'ssh'}
+    it {should  be_service_both 'http'}
+    it {should  be_service_both 'tomcat'}
+    it {should  be_service_both 'tomcatajp'}
+    it {should  be_service_both 'rpc-bind'}
+    it {should  be_service_both 'nfs'}
+    it {should  be_service_both 'selenium'}
+    it {should  be_service_both 'mysql'}
   end
-
-  describe command('firewall-cmd  --zone=trusted --query-masquerade --permanent') do
-    its(:stdout){should match /^yes/}
-  end
-
-  describe command('firewall-cmd  --zone=trusted --query-masquerade') do
-    its(:stdout){should match /^yes/}
-  end
-
-  describe command('firewall-cmd --list-interface --zone=dmz --permanent') do
-    its(:stdout){should match /^enp0s9/}
-  end
-
-  describe command('firewall-cmd --list-interface --zone=dmz') do
-    its(:stdout){should match /^enp0s9/}
-  end
-
-  describe command('firewall-cmd --list-service --zone=dmz --permanent') do
-    its(:stdout){should match /^openvpn/}
-  end
-  describe command('firewall-cmd --list-service --zone=dmz') do
-    its(:stdout){should match /^openvpn/}
-  end
-
-  describe command('firewall-cmd --list-service --zone=dmz --permanent') do
-    its(:stdout){should_not match /.*ssh.*/}
-  end
-  describe command('firewall-cmd --list-service --zone=dmz') do
-    its(:stdout){should_not match /.*ssh.*/}
-  end
-
 end

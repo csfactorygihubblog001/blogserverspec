@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'rake'
 require 'rspec/core/rake_task'
 
@@ -21,7 +22,7 @@ namespace :spec do
     desc "Run serverspec tests to #{original_target}"
     RSpec::Core::RakeTask.new(target.to_sym) do |t|
       ENV['TARGET_HOST'] = original_target
-      t.pattern = "spec/#{original_target}/*_1071*_spec.rb"
+      t.pattern = "spec/#{original_target}/*_3001*_spec.rb"
     end
   end
 end
